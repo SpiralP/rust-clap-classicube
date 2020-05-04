@@ -705,8 +705,7 @@ impl<'help> Arg<'help> {
     /// [`Arg::required_unless_one`]: ./struct.Arg.html#method.required_unless_one
     /// [`Arg::required_unless_all(names)`]: ./struct.Arg.html#method.required_unless_all
     pub fn required_unless_all(mut self, names: &[&str]) -> Self {
-        self.r_unless
-            .extend(names.iter().map(|name| Id::from(name)));
+        self.r_unless.extend(names.iter().map(Id::from));
         self.setting(ArgSettings::RequiredUnlessAll)
     }
 
@@ -775,8 +774,7 @@ impl<'help> Arg<'help> {
     /// [`Arg::required_unless_one(names)`]: ./struct.Arg.html#method.required_unless_one
     /// [`Arg::required_unless_all`]: ./struct.Arg.html#method.required_unless_all
     pub fn required_unless_one(mut self, names: &[&str]) -> Self {
-        self.r_unless
-            .extend(names.iter().map(|name| Id::from(name)));
+        self.r_unless.extend(names.iter().map(Id::from));
         self
     }
 
@@ -876,8 +874,7 @@ impl<'help> Arg<'help> {
     /// [`Arg::exclusive(true)`]: ./struct.Arg.html#method.exclusive
 
     pub fn conflicts_with_all(mut self, names: &[&str]) -> Self {
-        self.blacklist
-            .extend(names.iter().map(|name| Id::from(name)));
+        self.blacklist.extend(names.iter().map(Id::from));
         self
     }
 
@@ -1060,8 +1057,7 @@ impl<'help> Arg<'help> {
     /// assert!(!m.is_present("flag"));
     /// ```
     pub fn overrides_with_all<T: Key>(mut self, names: &[T]) -> Self {
-        self.overrides
-            .extend(names.iter().map(|name| Id::from(name)));
+        self.overrides.extend(names.iter().map(Id::from));
         self
     }
 
@@ -1751,8 +1747,7 @@ impl<'help> Arg<'help> {
     /// ```
     /// [`ArgGroup`]: ./struct.ArgGroup.html
     pub fn groups<T: Key>(mut self, group_ids: &[T]) -> Self {
-        self.groups
-            .extend(group_ids.iter().map(|name| Id::from(name)));
+        self.groups.extend(group_ids.iter().map(Id::from));
         self
     }
 
@@ -4008,10 +4003,8 @@ impl<'help> Arg<'help> {
                 self.set_mut(ArgSettings::MultipleValues);
                 self.set_mut(ArgSettings::MultipleOccurrences);
             }
-        } else if self.is_set(ArgSettings::TakesValue) {
-            if self.val_names.len() > 1 {
-                self.num_vals = Some(self.val_names.len() as u64);
-            }
+        } else if self.is_set(ArgSettings::TakesValue) && self.val_names.len() > 1 {
+            self.num_vals = Some(self.val_names.len() as u64);
         }
     }
 
