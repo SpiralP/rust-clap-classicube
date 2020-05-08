@@ -257,7 +257,7 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
         let bin_name = if let Some(bn) = self.cmd.get_bin_name() {
             if bn.contains(' ') {
                 // In case we're dealing with subcommands i.e. git mv is translated to git-mv
-                bn.replace(' ', "-")
+                bn.to_string()
             } else {
                 wrap(&self.cmd.get_name().replace("{n}", "\n"), self.term_w)
             }
