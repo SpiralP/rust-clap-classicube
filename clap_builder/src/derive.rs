@@ -22,27 +22,6 @@ use std::ffi::OsString;
 ///
 /// **NOTE:** Deriving requires the `derive` feature flag
 pub trait Parser: FromArgMatches + CommandFactory + Sized {
-    /// Parse from `std::env::args_os()`, exit on error
-    fn parse() -> Self {
-        let mut matches = <Self as CommandFactory>::command().get_matches();
-        let res = <Self as FromArgMatches>::from_arg_matches_mut(&mut matches)
-            .map_err(format_error::<Self>);
-        match res {
-            Ok(s) => s,
-            Err(e) => {
-                // Since this is more of a development-time error, we aren't doing as fancy of a quit
-                // as `get_matches`
-                e.exit()
-            }
-        }
-    }
-
-    /// Parse from `std::env::args_os()`, return Err on error.
-    fn try_parse() -> Result<Self, Error> {
-        let mut matches = ok!(<Self as CommandFactory>::command().try_get_matches());
-        <Self as FromArgMatches>::from_arg_matches_mut(&mut matches).map_err(format_error::<Self>)
-    }
-
     /// Parse from iterator, exit on error
     fn parse_from<I, T>(itr: I) -> Self
     where
@@ -285,14 +264,6 @@ pub trait ValueEnum: Sized + Clone {
 }
 
 impl<T: Parser> Parser for Box<T> {
-    fn parse() -> Self {
-        Box::new(<T as Parser>::parse())
-    }
-
-    fn try_parse() -> Result<Self, Error> {
-        <T as Parser>::try_parse().map(Box::new)
-    }
-
     fn parse_from<I, It>(itr: I) -> Self
     where
         I: IntoIterator<Item = It>,

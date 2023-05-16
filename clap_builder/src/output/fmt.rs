@@ -32,31 +32,6 @@ impl Colorizer {
 
 /// Printing methods.
 impl Colorizer {
-    #[cfg(feature = "color")]
-    pub(crate) fn print(&self) -> std::io::Result<()> {
-        let color_when = match self.color_when {
-            ColorChoice::Always => anstream::ColorChoice::Always,
-            ColorChoice::Auto => anstream::ColorChoice::Auto,
-            ColorChoice::Never => anstream::ColorChoice::Never,
-        };
-
-        let mut stdout;
-        let mut stderr;
-        let writer: &mut dyn std::io::Write = match self.stream {
-            Stream::Stderr => {
-                stderr = anstream::AutoStream::new(std::io::stderr().lock(), color_when);
-                &mut stderr
-            }
-            Stream::Stdout => {
-                stdout = anstream::AutoStream::new(std::io::stdout().lock(), color_when);
-                &mut stdout
-            }
-        };
-
-        self.content.write_to(writer)
-    }
-
-    #[cfg(not(feature = "color"))]
     pub(crate) fn print(&self) -> std::io::Result<()> {
         // [e]println can't be used here because it panics
         // if something went wrong. We don't want that.

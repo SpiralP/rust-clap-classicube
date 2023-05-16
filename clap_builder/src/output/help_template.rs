@@ -3,6 +3,13 @@
 // Wanting consistency in our calls
 #![allow(clippy::write_with_newline)]
 
+mod terminal_size {
+    pub struct Size(pub u16);
+    pub fn terminal_size() -> Option<(Size, Size)> {
+        Some((Size(62), Size(30)))
+    }
+}
+
 // Std
 use std::borrow::Cow;
 use std::cmp;

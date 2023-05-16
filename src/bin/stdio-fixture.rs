@@ -11,5 +11,5 @@ fn main() {
                 .action(clap::ArgAction::SetTrue)
                 .long_help("more log"),
         );
-    cmd.get_matches();
+    cmd.get_matches_from(std::env::args_os());
 }

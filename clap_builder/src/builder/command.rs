@@ -1,7 +1,6 @@
 #![cfg_attr(not(feature = "usage"), allow(unused_mut))]
 
 // Std
-use std::env;
 use std::ffi::OsString;
 use std::fmt;
 use std::io;
@@ -476,88 +475,6 @@ impl Command {
     /// ```
     pub fn error(&mut self, kind: ErrorKind, message: impl std::fmt::Display) -> Error {
         Error::raw(kind, message).format(self)
-    }
-
-    /// Parse [`env::args_os`], exiting on failure.
-    ///
-    /// # Panics
-    ///
-    /// If contradictory arguments or settings exist.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// # use clap_builder as clap;
-    /// # use clap::{Command, Arg};
-    /// let matches = Command::new("myprog")
-    ///     // Args and options go here...
-    ///     .get_matches();
-    /// ```
-    /// [`env::args_os`]: std::env::args_os()
-    /// [`Command::try_get_matches_from_mut`]: Command::try_get_matches_from_mut()
-    #[inline]
-    pub fn get_matches(self) -> ArgMatches {
-        self.get_matches_from(env::args_os())
-    }
-
-    /// Parse [`env::args_os`], exiting on failure.
-    ///
-    /// Like [`Command::get_matches`] but doesn't consume the `Command`.
-    ///
-    /// # Panics
-    ///
-    /// If contradictory arguments or settings exist.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// # use clap_builder as clap;
-    /// # use clap::{Command, Arg};
-    /// let mut cmd = Command::new("myprog")
-    ///     // Args and options go here...
-    ///     ;
-    /// let matches = cmd.get_matches_mut();
-    /// ```
-    /// [`env::args_os`]: std::env::args_os()
-    /// [`Command::get_matches`]: Command::get_matches()
-    pub fn get_matches_mut(&mut self) -> ArgMatches {
-        self.try_get_matches_from_mut(&mut env::args_os())
-            .unwrap_or_else(|e| e.exit())
-    }
-
-    /// Parse [`env::args_os`], returning a [`clap::Result`] on failure.
-    ///
-    /// **NOTE:** This method WILL NOT exit when `--help` or `--version` (or short versions) are
-    /// used. It will return a [`clap::Error`], where the [`kind`] is a
-    /// [`ErrorKind::DisplayHelp`] or [`ErrorKind::DisplayVersion`] respectively. You must call
-    /// [`Error::exit`] or perform a [`std::process::exit`].
-    ///
-    /// # Panics
-    ///
-    /// If contradictory arguments or settings exist.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// # use clap_builder as clap;
-    /// # use clap::{Command, Arg};
-    /// let matches = Command::new("myprog")
-    ///     // Args and options go here...
-    ///     .try_get_matches()
-    ///     .unwrap_or_else(|e| e.exit());
-    /// ```
-    /// [`env::args_os`]: std::env::args_os()
-    /// [`Error::exit`]: crate::Error::exit()
-    /// [`std::process::exit`]: std::process::exit()
-    /// [`clap::Result`]: Result
-    /// [`clap::Error`]: crate::Error
-    /// [`kind`]: crate::Error
-    /// [`ErrorKind::DisplayHelp`]: crate::error::ErrorKind::DisplayHelp
-    /// [`ErrorKind::DisplayVersion`]: crate::error::ErrorKind::DisplayVersion
-    #[inline]
-    pub fn try_get_matches(self) -> ClapResult<ArgMatches> {
-        // Start the parsing
-        self.try_get_matches_from(env::args_os())
     }
 
     /// Parse the specified arguments, exiting on failure.

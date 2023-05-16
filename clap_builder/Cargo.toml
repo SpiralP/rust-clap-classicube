@@ -35,8 +35,8 @@ debug = ["dep:backtrace"] # Enables debug messages
 unstable-doc = ["cargo", "wrap_help", "env", "unicode", "string", "unstable-styles"] # for docs.rs
 
 # Used in default
-std = ["anstyle/std"] # support for no_std in a backwards-compatible way
-color = ["dep:anstream"]
+std = [] # support for no_std in a backwards-compatible way
+color = []
 help = []
 usage = []
 error-context = []
@@ -45,7 +45,7 @@ suggestions = ["dep:strsim", "error-context"]
 # Optional
 deprecated = [] # Guided experience to prepare for next breaking release (at different stages of development, this may become default)
 cargo = ["dep:once_cell"] # Disable if you're not using Cargo, enables Cargo-env-var-dependent macros
-wrap_help = ["help", "dep:terminal_size"]
+wrap_help = ["help"]
 env = [] # Use environment variables during arg parsing
 unicode = ["dep:unicode-width", "dep:unicase"]  # Support for unicode characters in arguments and help messages
 string = []  # Allow runtime generated strings
@@ -58,13 +58,11 @@ unstable-styles = ["color"]
 bench = false
 
 [dependencies]
+classicube-helpers = { git = "https://github.com/SpiralP/rust-classicube-helpers.git" }
 clap_lex = { path = "../clap_lex", version = "0.4.0" }
 bitflags = "1.2.0"
 unicase = { version = "2.6.0", optional = true }
 strsim = { version = "0.10.0",  optional = true }
-anstream = { version = "0.3.0", optional = true }
-anstyle = "1.0.0"
-terminal_size = { version = "0.2.1", optional = true }
 backtrace = { version = "0.3.67", optional = true }
 unicode-width = { version = "0.1.9", optional = true }
 once_cell = { version = "1.12.0", optional = true }

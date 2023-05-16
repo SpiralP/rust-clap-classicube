@@ -1,3 +1,62 @@
+mod anstream {
+    pub mod adapter {
+        pub fn strip_str(s: &str) -> impl Iterator<Item = &str> {
+            [s].into_iter()
+        }
+    }
+}
+
+mod anstyle {
+    #[derive(Copy, Clone, Debug)]
+    pub struct Style {
+        color: Option<Color>,
+    }
+    impl Style {
+        pub const fn new() -> Self {
+            Self { color: None }
+        }
+
+        pub const fn bold(self) -> Self {
+            self
+        }
+        pub const fn fg_color(mut self, color: Option<Color>) -> Self {
+            self.color = color;
+            self
+        }
+        pub const fn underline(self) -> Self {
+            self
+        }
+
+        pub const fn render(&self) -> &'static str {
+            match self.color {
+                None => "",
+                Some(Color::Ansi(AnsiColor::Green)) => classicube_helpers::color::LIME,
+                Some(Color::Ansi(AnsiColor::Red)) => classicube_helpers::color::RED,
+                Some(Color::Ansi(AnsiColor::Yellow)) => classicube_helpers::color::YELLOW,
+            }
+        }
+        pub const fn render_reset(&self) -> &'static str {
+            if self.color.is_some() {
+                classicube_helpers::color::WHITE
+            } else {
+                ""
+            }
+        }
+    }
+
+    #[derive(Copy, Clone, Debug)]
+    pub enum Color {
+        Ansi(AnsiColor),
+    }
+
+    #[derive(Copy, Clone, Debug)]
+    pub enum AnsiColor {
+        Green,
+        Red,
+        Yellow,
+    }
+}
+
 /// Terminal-styling container
 ///
 /// Styling may be encoded as [ANSI Escape Code](https://en.wikipedia.org/wiki/ANSI_escape_code)

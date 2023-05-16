@@ -128,25 +128,6 @@ pub struct RawArgs {
 impl RawArgs {
     //// Create an argument list to parse
     ///
-    /// **NOTE:** The argument returned will be the current binary.
-    ///
-    /// # Example
-    ///
-    /// ```rust,no_run
-    /// # use std::path::PathBuf;
-    /// let raw = clap_lex::RawArgs::from_args();
-    /// let mut cursor = raw.cursor();
-    /// let _bin = raw.next_os(&mut cursor);
-    ///
-    /// let mut paths = raw.remaining(&mut cursor).map(PathBuf::from).collect::<Vec<_>>();
-    /// println!("{:?}", paths);
-    /// ```
-    pub fn from_args() -> Self {
-        Self::new(std::env::args_os())
-    }
-
-    //// Create an argument list to parse
-    ///
     /// # Example
     ///
     /// ```rust,no_run
