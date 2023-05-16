@@ -30,26 +30,6 @@ impl Colorizer {
     }
 }
 
-/// Printing methods.
-impl Colorizer {
-    pub(crate) fn print(&self) -> std::io::Result<()> {
-        // [e]println can't be used here because it panics
-        // if something went wrong. We don't want that.
-        match self.stream {
-            Stream::Stdout => {
-                let stdout = std::io::stdout();
-                let mut stdout = stdout.lock();
-                self.content.write_to(&mut stdout)
-            }
-            Stream::Stderr => {
-                let stderr = std::io::stderr();
-                let mut stderr = stderr.lock();
-                self.content.write_to(&mut stderr)
-            }
-        }
-    }
-}
-
 /// Color-unaware printing. Never uses coloring.
 impl std::fmt::Display for Colorizer {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {

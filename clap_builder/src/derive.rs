@@ -22,25 +22,6 @@ use std::ffi::OsString;
 ///
 /// **NOTE:** Deriving requires the `derive` feature flag
 pub trait Parser: FromArgMatches + CommandFactory + Sized {
-    /// Parse from iterator, exit on error
-    fn parse_from<I, T>(itr: I) -> Self
-    where
-        I: IntoIterator<Item = T>,
-        T: Into<OsString> + Clone,
-    {
-        let mut matches = <Self as CommandFactory>::command().get_matches_from(itr);
-        let res = <Self as FromArgMatches>::from_arg_matches_mut(&mut matches)
-            .map_err(format_error::<Self>);
-        match res {
-            Ok(s) => s,
-            Err(e) => {
-                // Since this is more of a development-time error, we aren't doing as fancy of a quit
-                // as `get_matches_from`
-                e.exit()
-            }
-        }
-    }
-
     /// Parse from iterator, return Err on error.
     fn try_parse_from<I, T>(itr: I) -> Result<Self, Error>
     where
@@ -49,22 +30,6 @@ pub trait Parser: FromArgMatches + CommandFactory + Sized {
     {
         let mut matches = ok!(<Self as CommandFactory>::command().try_get_matches_from(itr));
         <Self as FromArgMatches>::from_arg_matches_mut(&mut matches).map_err(format_error::<Self>)
-    }
-
-    /// Update from iterator, exit on error
-    fn update_from<I, T>(&mut self, itr: I)
-    where
-        I: IntoIterator<Item = T>,
-        T: Into<OsString> + Clone,
-    {
-        let mut matches = <Self as CommandFactory>::command_for_update().get_matches_from(itr);
-        let res = <Self as FromArgMatches>::update_from_arg_matches_mut(self, &mut matches)
-            .map_err(format_error::<Self>);
-        if let Err(e) = res {
-            // Since this is more of a development-time error, we aren't doing as fancy of a quit
-            // as `get_matches_from`
-            e.exit()
-        }
     }
 
     /// Update from iterator, return Err on error.
@@ -264,14 +229,6 @@ pub trait ValueEnum: Sized + Clone {
 }
 
 impl<T: Parser> Parser for Box<T> {
-    fn parse_from<I, It>(itr: I) -> Self
-    where
-        I: IntoIterator<Item = It>,
-        It: Into<OsString> + Clone,
-    {
-        Box::new(<T as Parser>::parse_from(itr))
-    }
-
     fn try_parse_from<I, It>(itr: I) -> Result<Self, Error>
     where
         I: IntoIterator<Item = It>,

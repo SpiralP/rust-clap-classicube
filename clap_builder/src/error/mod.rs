@@ -214,54 +214,6 @@ impl<F: ErrorFormatter> Error<F> {
         }
     }
 
-    /// Prints the error and exits.
-    ///
-    /// Depending on the error kind, this either prints to `stderr` and exits with a status of `2`
-    /// or prints to `stdout` and exits with a status of `0`.
-    pub fn exit(&self) -> ! {
-        if self.use_stderr() {
-            // Swallow broken pipe errors
-            let _ = self.print();
-
-            safe_exit(USAGE_CODE);
-        }
-
-        // Swallow broken pipe errors
-        let _ = self.print();
-        safe_exit(SUCCESS_CODE)
-    }
-
-    /// Prints formatted and colored error to `stdout` or `stderr` according to its error kind
-    ///
-    /// # Example
-    /// ```no_run
-    /// # use clap_builder as clap;
-    /// use clap::Command;
-    ///
-    /// match Command::new("Command").try_get_matches() {
-    ///     Ok(matches) => {
-    ///         // do_something
-    ///     },
-    ///     Err(err) => {
-    ///         err.print().expect("Error writing Error");
-    ///         // do_something
-    ///     },
-    /// };
-    /// ```
-    pub fn print(&self) -> io::Result<()> {
-        let style = self.formatted();
-        let color_when = if matches!(
-            self.kind(),
-            ErrorKind::DisplayHelp | ErrorKind::DisplayHelpOnMissingArgumentOrSubcommand,
-        ) {
-            self.inner.color_help_when
-        } else {
-            self.inner.color_when
-        };
-        let c = Colorizer::new(self.stream(), color_when).with_content(style.into_owned());
-        c.print()
-    }
-
     /// Render the error message to a [`StyledStr`].
     ///
     /// # Example

@@ -477,40 +477,6 @@ impl Command {
         Error::raw(kind, message).format(self)
     }
 
-    /// Parse the specified arguments, exiting on failure.
-    ///
-    /// **NOTE:** The first argument will be parsed as the binary name unless
-    /// [`Command::no_binary_name`] is used.
-    ///
-    /// # Panics
-    ///
-    /// If contradictory arguments or settings exist.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// # use clap_builder as clap;
-    /// # use clap::{Command, Arg};
-    /// let arg_vec = vec!["my_prog", "some", "args", "to", "parse"];
-    ///
-    /// let matches = Command::new("myprog")
-    ///     // Args and options go here...
-    ///     .get_matches_from(arg_vec);
-    /// ```
-    /// [`Command::get_matches`]: Command::get_matches()
-    /// [`clap::Result`]: Result
-    /// [`Vec`]: std::vec::Vec
-    pub fn get_matches_from<I, T>(mut self, itr: I) -> ArgMatches
-    where
-        I: IntoIterator<Item = T>,
-        T: Into<OsString> + Clone,
-    {
-        self.try_get_matches_from_mut(itr).unwrap_or_else(|e| {
-            drop(self);
-            e.exit()
-        })
-    }
-
     /// Parse the specified arguments, returning a [`clap::Result`] on failure.
     ///
     /// **NOTE:** This method WILL NOT exit when `--help` or `--version` (or short versions) are
@@ -638,59 +604,6 @@ impl Command {
         }
 
         self._do_parse(&mut raw_args, cursor)
-    }
-
-    /// Prints the short help message (`-h`) to [`io::stdout()`].
-    ///
-    /// See also [`Command::print_long_help`].
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// # use clap_builder as clap;
-    /// # use clap::Command;
-    /// let mut cmd = Command::new("myprog");
-    /// cmd.print_help();
-    /// ```
-    /// [`io::stdout()`]: std::io::stdout()
-    pub fn print_help(&mut self) -> io::Result<()> {
-        self._build_self(false);
-        let color = self.color_help();
-
-        let mut styled = StyledStr::new();
-        let usage = Usage::new(self);
-        write_help(&mut styled, self, &usage, false);
-
-        let c = Colorizer::new(Stream::Stdout, color).with_content(styled);
-        c.print()
-    }
-
-    /// Prints the long help message (`--help`) to [`io::stdout()`].
-    ///
-    /// See also [`Command::print_help`].
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// # use clap_builder as clap;
-    /// # use clap::Command;
-    /// let mut cmd = Command::new("myprog");
-    /// cmd.print_long_help();
-    /// ```
-    /// [`io::stdout()`]: std::io::stdout()
-    /// [`BufWriter`]: std::io::BufWriter
-    /// [`-h` (short)]: Arg::help()
-    /// [`--help` (long)]: Arg::long_help()
-    pub fn print_long_help(&mut self) -> io::Result<()> {
-        self._build_self(false);
-        let color = self.color_help();
-
-        let mut styled = StyledStr::new();
-        let usage = Usage::new(self);
-        write_help(&mut styled, self, &usage, true);
-
-        let c = Colorizer::new(Stream::Stdout, color).with_content(styled);
-        c.print()
     }
 
     /// Render the short help message (`-h`) to a [`StyledStr`]
