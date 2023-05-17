@@ -9,6 +9,8 @@ pub(crate) mod textwrap;
 
 pub(crate) use self::help::write_help;
 #[cfg(feature = "help")]
+pub(crate) use self::help_template::dimensions;
+#[cfg(feature = "help")]
 pub(crate) use self::help_template::AutoHelp;
 #[cfg(feature = "help")]
 pub(crate) use self::help_template::HelpTemplate;
