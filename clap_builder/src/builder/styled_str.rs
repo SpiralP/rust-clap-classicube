@@ -16,14 +16,8 @@ mod anstyle {
             Self { color: None }
         }
 
-        pub const fn bold(self) -> Self {
-            self
-        }
         pub const fn fg_color(mut self, color: Option<Color>) -> Self {
             self.color = color;
-            self
-        }
-        pub const fn underline(self) -> Self {
             self
         }
 
@@ -289,12 +283,14 @@ impl Styles {
         #[cfg(feature = "color")]
         {
             Self {
-                header: anstyle::Style::new().bold().underline(),
+                header: anstyle::Style::new()
+                    .fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Yellow))),
                 error: anstyle::Style::new()
-                    .fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Red)))
-                    .bold(),
-                usage: anstyle::Style::new().bold().underline(),
-                literal: anstyle::Style::new().bold(),
+                    .fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Red))),
+                usage: anstyle::Style::new()
+                    .fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Yellow))),
+                literal: anstyle::Style::new()
+                    .fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Green))),
                 placeholder: anstyle::Style::new(),
                 valid: anstyle::Style::new()
                     .fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Green))),
